@@ -32,7 +32,11 @@ body{font-family:'Bw Aleta',-apple-system,'Helvetica Neue',sans-serif;user-selec
 .cbtn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.5;transition:opacity .2s}
 .cbtn:hover{opacity:1}
 .cbtn svg{width:17px;height:17px;stroke:#fff;stroke-width:1.4;fill:none}
-.cbtn.lang{font:400 12px/1 'Bw Aleta',sans-serif;color:#fff;letter-spacing:.06em}
+#langsw{position:fixed;top:14px;right:16px;z-index:46;display:flex;align-items:center;gap:9px;pointer-events:auto;font:300 12px/1 'Bw Aleta','PingFang TC',sans-serif;letter-spacing:.12em}
+#langsw span.sep{color:#fff;opacity:.25;font-weight:300}
+#langsw a{color:#fff;opacity:.42;cursor:pointer;text-decoration:none;transition:opacity .2s;padding:4px 2px}
+#langsw a:hover{opacity:.9}
+#langsw a.act{opacity:.95}
 #sndbtn{display:none}
 #sndbtn.muted svg .on{display:none}
 #sndbtn:not(.muted) svg .off{display:none}
@@ -65,8 +69,8 @@ body{font-family:'Bw Aleta',-apple-system,'Helvetica Neue',sans-serif;user-selec
   <div class="arr" id="prev"><svg viewBox="0 0 26 46"><polyline points="20,4 6,23 20,42"/></svg></div>
   <div class="arr" id="next"><svg viewBox="0 0 26 46"><polyline points="6,4 20,23 6,42"/></svg></div>
   <div id="counter"></div>
+  <div id="langsw"><a id="lang-en" class="">EN</a><span class="sep">|</span><a id="lang-cn" class="act">中文</a></div>
   <div id="ctrl">
-    <div class="cbtn lang" id="langbtn" title="English version">EN</div>
     <div class="cbtn" id="sndbtn" title="Sound"><svg viewBox="0 0 24 24"><g class="on"><path d="M4 9v6h4l6 5V4L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 6a8.4 8.4 0 0 1 0 12"/></g><g class="off"><path d="M4 9v6h4l6 5V4L8 9H4z"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></g></svg></div>
     <div class="cbtn" id="gridbtn" title="Overview (G)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
     <div class="cbtn" id="fsbtn" title="Fullscreen (F)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/></svg></div>
@@ -243,7 +247,8 @@ function toggleFS(){
   else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
 }
 $('#fsbtn').addEventListener('click', toggleFS);
-$('#langbtn').addEventListener('click', () => { location.href = '../' + '#' + cur; });
+$('#lang-en').addEventListener('click', () => { if(!$('#lang-en').classList.contains('act')) location.href = '../' + '#' + cur; });
+$('#lang-cn').addEventListener('click', () => { if(!$('#lang-cn').classList.contains('act')) location.href = '' + '#' + cur; });
 
 document.addEventListener('visibilitychange', () => {
   if(document.visibilityState === 'visible')
