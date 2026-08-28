@@ -19,13 +19,14 @@ body{font-family:'Bw Aleta',-apple-system,'Helvetica Neue',sans-serif;user-selec
 .world{position:absolute;top:0;left:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden}
 .world img.slide{position:absolute;top:0;left:0;width:1920px;height:1080px;display:block}
 .world video{position:absolute;object-fit:fill;background:transparent;opacity:0;transition:opacity .22s ease}
-.ov{position:absolute;white-space:pre;line-height:1.45;letter-spacing:.02em;z-index:4;opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,.61,.36,1)}
-.page{position:absolute;inset:0;opacity:0;transition:opacity .5s ease}
-.page.on{opacity:1}
-.page.out{opacity:0}
+.ov{position:absolute;white-space:pre;line-height:1.45;letter-spacing:.02em;z-index:4;opacity:0;animation:ovin .55s cubic-bezier(.22,.61,.36,1) both}
+@keyframes ovin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.page{position:absolute;inset:0;opacity:0;animation:pagein .5s ease .02s both}
+@keyframes pagein{from{opacity:0}to{opacity:1}}
+.page.out{animation:pageout .55s ease both}
+@keyframes pageout{from{opacity:1}to{opacity:0}}
 .world img.slide.kb{animation:kb 7s cubic-bezier(.25,.5,.35,1) both}
 @keyframes kb{from{transform:scale(1)}to{transform:scale(1.014)}}
-.page.on .ov{opacity:1;transform:none}
 #prog{position:fixed;left:0;bottom:0;height:2px;width:0;background:linear-gradient(90deg,#E0C48E,#b98f52);opacity:.8;transition:width .55s cubic-bezier(.22,.61,.36,1);z-index:45}
 #ui{position:fixed;inset:0;pointer-events:none;z-index:40}
 .arr{position:fixed;top:50%;transform:translateY(-50%);width:56px;height:96px;display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:auto;opacity:.42;transition:opacity .2s,transform .28s cubic-bezier(.22,.61,.36,1)}
@@ -46,10 +47,8 @@ body{font-family:'Bw Aleta',-apple-system,'Helvetica Neue',sans-serif;user-selec
 #grid.on{display:block}
 #grid .gwrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;max-width:1500px;margin:0 auto}
 #grid .cell{position:relative;cursor:pointer;opacity:.82;transition:opacity .15s,outline .15s;outline:1px solid transparent}
-#grid.on .cell{animation:gin .38s cubic-bezier(.22,.61,.36,1) both}
-@keyframes gin{from{opacity:0;transform:translateY(12px)}to{opacity:.82;transform:none}}
-#grid.on .cell.cur{animation-name:ginc}
-@keyframes ginc{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+#grid.on .cell{animation:gin .38s cubic-bezier(.22,.61,.36,1) backwards}
+@keyframes gin{from{opacity:0;transform:translateY(12px)}}
 #grid .cell:hover{opacity:1}
 #grid .cell.cur{outline:1px solid #E0C48E;opacity:1}
 #grid img{width:100%;display:block}
@@ -114,7 +113,7 @@ function overlayEl(o){
     d.textContent = o.text;
   } else if(o.t === 'patch'){
     st.width = o.w+'px'; st.height = o.h+'px'; st.background = o.c;
-    st.opacity = 1; st.transform = 'none'; st.transition = 'none';
+    st.opacity = 1; st.animation = 'none';
   } else if(o.t === 'hdr'){
     st.font = 'italic 400 27px/1.25 "Cormorant Garamond", Palatino, serif'; st.color = '#DADBDB';
     d.textContent = o.text;
@@ -165,7 +164,7 @@ function buildPage(n){
   }
   (CFG.overlays[n]||[]).forEach((o, i) => {
     const el = overlayEl(o);
-    if(o.t !== 'patch') el.style.transitionDelay = (160 + i * 70) + 'ms';
+    if(o.t !== 'patch') el.style.animationDelay = (180 + i * 70) + 'ms';
     w.appendChild(el);
   });
   return pg;
@@ -192,11 +191,9 @@ function show(n){
   world = buildPage(n);
   stage.appendChild(world);
   layout();
-  void world.offsetWidth;   // force reflow so the fade-in runs
-  world.classList.add('on');
   if(old){
-    old.classList.remove('on'); old.classList.add('out');
-    setTimeout(() => old.remove(), 540);
+    old.classList.add('out');
+    setTimeout(() => old.remove(), 600);
   }
   curVids = [...world.querySelectorAll('video')];
   curVids.forEach(v => {
